@@ -1,0 +1,7 @@
+.ghc.environment.*
+_cache
+_tmp
+dist
+dist-newstyle
+node_modules
+result
