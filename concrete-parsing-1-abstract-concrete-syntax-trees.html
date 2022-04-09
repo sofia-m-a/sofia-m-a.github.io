@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Concrete parsing 1: Abstract concrete syntax trees</title>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A midpoint between abstract and concrete syntax trees">
+  
+  <meta name="author" content="Sofia M.A.">
+  
+  
+  <meta name="keywords" content="syntax">
+  
+
+  <meta property="og:site_name" content="Sofia's Blog">
+  <meta property="og:title" content="Concrete parsing 1: Abstract concrete syntax trees">
+  <meta property="og:url" content="https://sofia-m-a.github.io//concrete-parsing-1-abstract-concrete-syntax-trees.html">
+  <meta property="og:description" content="A midpoint between abstract and concrete syntax trees">
+  
+  <meta property="og:image" content="https://sofia-m-a.github.io/./images/butterfly.jpg">
+  
+  
+  <meta property="og:type" content="article">
+  
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:site" content="Sofia's Blog">
+  <meta property="twitter:title" content="Concrete parsing 1: Abstract concrete syntax trees">
+  <meta property="twitter:description" content="A midpoint between abstract and concrete syntax trees">
+  
+  <meta property="twitter:image" content="https://sofia-m-a.github.io/./images/butterfly.jpg">
+  
+  
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="canonical" href="https://sofia-m-a.github.io//concrete-parsing-1-abstract-concrete-syntax-trees.html">
+  <link rel="stylesheet" href="./css/default.css" />
+  <link rel="stylesheet" href="./css/code.css" />
+</head>
+
+<body>
+  <main>
+  <article>
+    <header>
+      <h1>
+        <a href="./concrete-parsing-1-abstract-concrete-syntax-trees.html">Concrete parsing 1: Abstract concrete syntax trees</a>
+      </h1>
+      <div>
+        <small>2022-03-05</small>
+        
+        <small>(updated: 2022-03-05T04:08:37Z)</small>
+        
+      </div>
+    </header>
+    <section>
+      <h1 id="abstract-and-concrete-syntax-trees">Abstract and concrete syntax trees</h1>
+<p>Commonly, compilers and other language tools use a tree representation of parsed source code. The goal of an <em>abstract syntax tree</em> is to represent the structure of the source code in a form that’s easy to manipulate. By contrast, a <em>concrete syntax tree</em> represents the source code in a way that preserves all information present in the source.</p>
+<p>Concrete syntax trees have several advantages:</p>
+<ul>
+<li>we can output the source code underlying the tree exactly as it was input, not some abstracted form</li>
+<li>comments and whitespace are preserved, which can be useful for documentation tools, source formatters, and more</li>
+<li>it’s easier to represent erroneous programs, which is useful for error reporting and compiler support for interactive development</li>
+</ul>
+<h1 id="concrete-syntax-trees-in-haskell">Concrete syntax trees in Haskell</h1>
+<p>I’m not aware of a concrete syntax tree library for Haskell, but we can get an idea from the Rust libraries <a href="https://crates.io/crates/cstree">CSTree</a> and <a href="https://crates.io/crates/rowan">Rowan</a>. We can build something similar like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">CST</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">=</span> <span class="dt">Node</span> <span class="dt">NodeKind</span> [<span class="dt">CST</span>]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Leaf</span> <span class="dt">LeafKind</span> <span class="dt">Text</span></span></code></pre></div>
+<p>Here, a tree consists of <code>Node</code>s with a <code>NodeKind</code> and a list of children, and the leaves consist of a token of kind <code>LeafKind</code> and a span of <code>Text</code> recording the actual text of the token.</p>
+<h1 id="abstract-concrete-syntax-trees">Abstract concrete syntax trees</h1>
+<p>However, this representation isn’t so easy to manipulate, and doesn’t maintain any of the parsed structure of the tree. For instance, our parser might ensure that an <code>Add</code> node has two <code>Expression</code> children, but this isn’t reflected in the final concrete syntax tree. On ther other hand, an abstract styntax tree would have a <code>Add Expression Expression</code> constructor that exactly captures this invariant.</p>
+<p>Of course, this is in tension with one of the goals of a concrete syntax tree: to represent erroneous programs.</p>
+<p>However, it’s possible to find a middle ground between the two approaches, that preserves the benefits of a concrete syntax tree, but keeps some of the structure of an abstract syntax tree. Here’s an example concrete syntax tree type for expressions in a Scheme-like language:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">CSTExpr</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="ot">=</span> <span class="dt">Junk</span> <span class="dt">Text</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Comment</span> <span class="dt">Text</span> (<span class="dt">Maybe</span> <span class="dt">CSTExpr</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Whitespace</span> <span class="dt">Whitespace</span> (<span class="dt">Maybe</span> <span class="dt">CSTExpr</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Atom</span> <span class="dt">Text</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- literals</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Bool</span> <span class="dt">Bool</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Number</span> <span class="dt">Integer</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Nil</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">String</span> [<span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Escape</span>] <span class="dt">Bool</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Quote</span> <span class="dt">CSTExpr</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">List</span> [<span class="dt">CSTExpr</span>] <span class="dt">Whitespace</span> <span class="dt">Bool</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">-- Guaranteed to be a sequence of space characters</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Whitespace</span> <span class="ot">=</span> <span class="dt">Whitespace</span> <span class="dt">Text</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Escape</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="ot">=</span> <span class="dt">SlashN</span> <span class="co">-- \n</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">SlashT</span> <span class="co">-- \t</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="dt">Unicode</span> <span class="dt">Int</span> <span class="co">-- &#39;\uXXXX&#39;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">|</span> <span class="op">...</span></span></code></pre></div>
+<p>Let’s go through this</p>
+<ul>
+<li>First, we have <code>Junk</code>, to represent any sequence of characters that cannot possibly begin a valid expression.</li>
+<li><code>Comment</code> keeps the original comment text, together with a possibly following CSTExpr node</li>
+<li>Whitespace keeps a span of whitespace characters and a possibly following Node</li>
+<li><code>Atom</code>, <code>Bool</code>, <code>Number</code> and <code>Nil</code> are straightforward</li>
+<li>For strings, we need to not just store <code>Text</code>, but remember which parts of the text correspond to escapes. For instance, “\u0041” and “a” have the same <code>Text</code> representation, but one uses an escape code. We also store whether or not the closing quote appears before the end of the file</li>
+<li><code>Quote</code> is straightforward.</li>
+<li>For <code>List</code>, we store any trailing whitespace and whether or not the closing ‘)’ appears before the end of the file.</li>
+</ul>
+<p>Note that “(a b c)” will be represented by</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">List</span> [</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Atom</span> <span class="st">&quot;a&quot;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Whitespace</span> (<span class="dt">Whitespace</span> <span class="st">&quot; &quot;</span>) (<span class="dt">Just</span> <span class="op">$</span> <span class="dt">Atom</span> <span class="st">&quot;b&quot;</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Whitespace</span> (<span class="dt">Whitespace</span> <span class="st">&quot; &quot;</span>) (<span class="dt">Just</span> <span class="op">$</span> <span class="dt">Atom</span> <span class="st">&quot;c&quot;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>(<span class="dt">Whitespace</span> <span class="fu">mempty</span>) <span class="dt">True</span></span></code></pre></div>
+<p>This is the reason to attach whitespace nodes to their following nodes, so that structure of the list is preserved as much as possible.</p>
+<h1 id="parsing-and-printing">Parsing and printing</h1>
+<p>To show our ability to roundtrip through this concrete representation, here’s a rough sketch of a grammar-like specification</p>
+<pre><code>&quot;;&quot; text &quot;\n&quot; maybe_expr ↔ Comment text maybe_expr
+white=(&quot; &quot; | &quot;\n&quot;)* maybe_expr ↔ Whitespace white maybe_expr
+symbolic (symbolic | digit)* ↔ Atom ...
+&quot;#t&quot; ↔ Bool True
+&quot;#f&quot; ↔ Bool False
+(-)? [0-9]+ ↔ Number ...
+&quot;nil&quot; ↔ Nil
+&quot;\&quot;&quot; string_char* &quot;\&quot;&quot; ↔ String ... is-eof
+&quot;&#39;&quot; expr ↔ Quote expr
+&quot;(&quot; expr* whitespace? &quot;)&quot; ↔ List expr whitespace is-eof
+anything_else ↔ Junk anything_else
+
+[^\]+ ↔ Left ...
+&quot;\n&quot; ↔ Right SlashN
+&quot;\t&quot; ↔ Right SlashT
+&quot;\u&quot; hex hex hex hex ↔ Right (Unicode ...)</code></pre>
+<h1 id="drawbacks">Drawbacks</h1>
+<p>It can be non-obvious how to elaborate an AST into a CST like the above. In an upcoming post, I hope to show how to build invertible parsers/printer pairs that make it more obvious.</p>
+    </section>
+  </article>
+</main>
+
+  <script async src="./js/script.js"></script>
+</body>
+
+</html>
