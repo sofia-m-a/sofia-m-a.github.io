@@ -22,11 +22,11 @@ import Text.Pandoc.Highlighting (Style, breezeDark, styleToCss)
 
 root :: String
 root =
-  "https://my-site.com"
+  "https://sofia-m-a.github.io/"
 
 siteName :: String
 siteName =
-  "My Site Name"
+  "Sofia's Blog"
 
 config :: Configuration
 config =
@@ -46,7 +46,12 @@ config =
 main :: IO ()
 main = hakyllWith config $ do
   forM_
-    [ "CNAME"
+    [ "android-chrome-192x192.png"
+    , "android-chrome-512x512.png"
+    , "apple-touch-icon.png"
+    , "CNAME"
+    , "favicon-16x16.png"
+    , "favicon-32x32.png"
     , "favicon.ico"
     , "robots.txt"
     , "_config.yml"
@@ -215,10 +220,10 @@ feedCompiler renderer =
 feedConfiguration :: FeedConfiguration
 feedConfiguration =
   FeedConfiguration
-    { feedTitle = "My Site"
-    , feedDescription = "My Site Description"
-    , feedAuthorName = "My Name"
-    , feedAuthorEmail = "me@myemail.com"
+    { feedTitle = "Sofia's Blog"
+    , feedDescription = "Random maths and programming stuff"
+    , feedAuthorName = "Sofia M.A."
+    , feedAuthorEmail = "sofia.ma@protonmail.com"
     , feedRoot = root
     }
 

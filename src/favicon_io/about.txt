@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: Crafty Girls
+- Font Author: Copyright (c) 2010 by Font Diner, Inc DBA Tart Workshop. All rights reserved.
+- Font Source: http://fonts.gstatic.com/s/craftygirls/v10/va9B4kXI39VaDdlPJo8N_NvuQR37fF3Wlg.ttf
+- Font License: Apache License, version 2.0 (http://www.apache.org/licenses/LICENSE-2.0.html))

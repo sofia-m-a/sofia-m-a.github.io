@@ -1,49 +1,55 @@
 <!DOCTYPE html>
 <html lang="$lang$">
-  <head>
-    <title>$title$</title>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="$desc$">
-    $if(author)$
-    <meta name="author" content="$author$">
-    $endif$
-    $if(keywords)$
-    <meta name="keywords" content="$keywords$">
-    $endif$
+<head>
+  <title>$title$</title>
 
-    <meta property="og:site_name" content="$siteName$">
-    <meta property="og:title" content="$title$">
-    <meta property="og:url" content="$root$$url$">
-    <meta property="og:description" content="$desc$">
-    $if(image)$
-    <meta property="og:image" content="$root$$image$">
-    $endif$
-    $if(type)$
-    <meta property="og:type" content="$type$">
-    $else$
-    <meta property="og:type" content="website">
-    $endif$
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="$desc$">
+  $if(author)$
+  <meta name="author" content="$author$">
+  $endif$
+  $if(keywords)$
+  <meta name="keywords" content="$keywords$">
+  $endif$
 
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:site" content="$siteName$">
-    <meta property="twitter:title" content="$title$">
-    <meta property="twitter:description" content="$desc$">
-    $if(image)$
-    <meta property="twitter:image" content="$root$$image$">
-    $endif$
-    $if(authorTwitter)$
-    <meta property="twitter:creator" content="$authorTwitter$">
-    $endif$
+  <meta property="og:site_name" content="$siteName$">
+  <meta property="og:title" content="$title$">
+  <meta property="og:url" content="$root$$url$">
+  <meta property="og:description" content="$desc$">
+  $if(image)$
+  <meta property="og:image" content="$root$$image$">
+  $endif$
+  $if(type)$
+  <meta property="og:type" content="$type$">
+  $else$
+  <meta property="og:type" content="website">
+  $endif$
 
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="canonical" href="$root$$url$">
-    <link rel="stylesheet" href="./css/default.css" />
-    <link rel="stylesheet" href="./css/code.css" />
-  </head>
-  <body>
-    $body$
-    <script async src="./js/script.js"></script>
-  </body>
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:site" content="$siteName$">
+  <meta property="twitter:title" content="$title$">
+  <meta property="twitter:description" content="$desc$">
+  $if(image)$
+  <meta property="twitter:image" content="$root$$image$">
+  $endif$
+  $if(authorTwitter)$
+  <meta property="twitter:creator" content="$authorTwitter$">
+  $endif$
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="canonical" href="$root$$url$">
+  <link rel="stylesheet" href="./css/default.css" />
+  <link rel="stylesheet" href="./css/code.css" />
+</head>
+
+<body>
+  $body$
+  <script async src="./js/script.js"></script>
+</body>
+
 </html>
