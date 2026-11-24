@@ -28,7 +28,7 @@ jobs:
       - run: nix build
 
       - name: Artifact pages
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pages
           path: result/dist
@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
         with:
           name: pages
           path: result
