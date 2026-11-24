@@ -1,3 +1,6 @@
+# I have a new blog
+See [sofia-m-a.codeberg.page](here)
+
 # hakyll-nix-template
 
 [Hakyll](https://jaspervdj.be/hakyll/) + [Nix](https://nixos.org) template
