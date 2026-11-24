@@ -1,5 +1,7 @@
 # I have a new blog
-See [sofia-m-a.codeberg.page](here)
+See [here](https://sofia-m-a.codeberg.page)
+
+( https://sofia-m-a.codeberg.page )
 
 # hakyll-nix-template
 

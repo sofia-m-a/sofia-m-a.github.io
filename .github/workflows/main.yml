@@ -8,10 +8,10 @@ jobs:
   build-nix:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v17
+        uses: cachix/install-nix-action@v32
         with:
           install_url: https://nixos-nix-install-tests.cachix.org/serve/i6laym9jw3wg9mw6ncyrk6gjx4l34vvx/install
           install_options: '--tarball-url-prefix https://nixos-nix-install-tests.cachix.org/serve'
@@ -40,14 +40,14 @@ jobs:
 
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v8
         with:
           name: pages
           path: result
 
       - name: GitHub Pages
         if: success()
-        uses: crazy-max/ghaction-github-pages@v2.6.0
+        uses: crazy-max/ghaction-github-pages@v5.0.0
         with:
           build_dir: result
           target_branch: gh-pages
